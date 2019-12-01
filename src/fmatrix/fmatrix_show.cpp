@@ -24,7 +24,7 @@ int getOptions(int argc, const char *argv[], bool &bBinary, bool &bHeader) {
     case 'b': bBinary = true;  break;
     case 'H': bHeader = false; break;
     case 'h':
-    case '?': 
+    case '?':
     default:
       return -1;
     }
@@ -38,8 +38,8 @@ int getOptions(int argc, const char *argv[], bool &bBinary, bool &bHeader) {
 
 class MyFMatrix : public fmatrix {
   bool bFrames, bBinary;
- public: 
-  MyFMatrix(bool _frames=true, bool _bin=false) : 
+ public:
+  MyFMatrix(bool _frames=true, bool _bin=false) :
     bFrames(_frames), bBinary(_bin) {}
 
   void print(ostream &os) const {
@@ -70,7 +70,7 @@ int main(int argc, const char *argv[]) {
   }
 
   for (int i=posArg; i<argc; ++i) {
- 
+
     ifstream is(argv[i], ios::binary);
     if (!is.good()) {
       cerr << "Error opening input file: " << argv[i] << endl;
@@ -86,7 +86,7 @@ int main(int argc, const char *argv[]) {
 
     if (bHeader)
       cout << "FMATRIX: " << argv[i] << '\n';
-    m.print(cout);    
+    m.print(cout);
     if (bHeader)
       cout << "----------------------------------------\n\n";
   }

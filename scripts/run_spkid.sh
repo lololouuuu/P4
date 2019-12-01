@@ -11,11 +11,11 @@
 # - lists:    directory with the list of signal files
 # - w:        a working directory for temporary files
 # - name_exp: name of the experiment
-# - db:       directory of the speecon database 
+# - db:       directory of the speecon database
 lists=lists
 w=work
 name_exp=one
-db=spk_db/speecon
+db=spk_ima/speecon
 
 # ------------------------
 # Usage
@@ -65,8 +65,8 @@ if [[ $? != 0 ]] ; then
    echo "Set PATH to include PAV executable programs ... "
    echo "Maybe modify ~/.bashrc or ~/.profile ..."
    exit 1
-fi 
-# Now, we assume that all the path for programs are already in the path 
+fi
+# Now, we assume that all the path for programs are already in the path
 
 # ----------------------------
 # Feature extraction functions
@@ -85,11 +85,26 @@ compute_lp() {
     done
 }
 
+compute_lpcc() {
+    for filename in $(cat $lists/class/all.train $lists/class/all.test); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lpcc 25 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_mfcc() {
+    for filename in $(cat $lists/class/all.train $lists/class/all.test); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2mfcc 13 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        echo $EXEC && $EXEC || exit 1
+    done
+}
 
 #  Set the name of the feature (not needed for feature extraction itself)
-if [[ ! -v FEAT && $# > 0 && "$(type -t compute_$1)" = function ]]; then
+if [[ ! -n "$FEAT" && $# > 0 && "$(type -t compute_$1)" = function ]]; then
 	FEAT=$1
-elif [[ ! -v FEAT ]]; then
+elif [[ ! -n "$FEAT" ]]; then
 	echo "Variable FEAT not set. Please rerun with FEAT set to the desired feature."
 	echo
 	echo "For instance:"
@@ -99,7 +114,7 @@ elif [[ ! -v FEAT ]]; then
 fi
 
 # ---------------------------------
-# Main program: 
+# Main program:
 # For each cmd in command line ...
 # ---------------------------------
 
@@ -128,7 +143,7 @@ for cmd in $*; do
        fi
        # Count errors
        perl -ne 'BEGIN {$ok=0; $err=0}
-                 next unless /^.*SA(...).*SES(...).*$/; 
+                 next unless /^.*SA(...).*SES(...).*$/;
                  if ($1 == $2) {$ok++}
                  else {$err++}
                  END {printf "nerr=%d\tntot=%d\terror_rate=%.2f%%\n", ($err, $ok+$err, 100*$err/($ok+$err))}' $w/class_${FEAT}_${name_exp}.log | tee -a $w/class_${FEAT}_${name_exp}.log
@@ -141,7 +156,7 @@ for cmd in $*; do
        echo "Implement the trainworld option ..."
    elif [[ $cmd == verify ]]; then
        ## @file
-	   # \TODO 
+	   # \TODO
 	   # Implement 'verify' in order to perform speaker verification
 	   #
 	   # - The standard output of gmm_verify must be redirected to file $w/verif_${FEAT}_${name_exp}.log.
@@ -166,7 +181,7 @@ for cmd in $*; do
 	   # The list of users is the same as for the classification task. The list of files to be
 	   # recognized is lists/final/class.test
        echo "To be implemented ..."
-   
+
    elif [[ $cmd == finalverif ]]; then
        ## @file
 	   # \TODO
@@ -175,12 +190,12 @@ for cmd in $*; do
 	   # is lists/final/verif.test, and the list of users claimed by the test files is
 	   # lists/final/verif.test.candidates
        echo "To be implemented ..."
-   
+
    # If the command is not recognize, check if it is the name
    # of a feature and a compute_$FEAT function exists.
    elif [[ "$(type -t compute_$cmd)" = function ]]; then
 	   FEAT=$cmd
-       compute_$FEAT       
+       compute_$FEAT
    else
        echo "undefined command $cmd" && exit 1
    fi
