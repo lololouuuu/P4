@@ -1,4 +1,4 @@
-#! /usr/bin/python3 -u
+#! /Library/Frameworks/Python.framework/Versions/3.7/bin/python3 -u
 
 import struct
 
@@ -19,7 +19,7 @@ def read_gmm(fileGMM):
     try:
         with open(fileGMM, 'rb') as fpGmm:
             headIn = fpGmm.read(15)
-    
+
             if headIn != header:
                 print(f'ERROR: {fileGMM} is not a valid GMM file')
                 exit(-1)
@@ -142,8 +142,6 @@ def plotGMM(fileGMM, xDim, yDim, percents, colorGmm, filesFeat=None, colorFeat=N
     plt.title(f'Region coverage predicted by {fileGMM}')
     plt.axis('tight')
     plt.axis(limits)
-    plt.show()
-
 
 ########################################################################################################
 # Main Program
@@ -153,14 +151,16 @@ USAGE='''
 Draws the regions in space covered with a certain probability by a GMM.
 
 Usage:
-    plotGMM [--help|-h] [options] <file-gmm> [<file-feat>...]
+    plotGMM [--help|-h] [options] <file-gmm1> <file-gmm2> [<file-feat1> <file-feat2>...]
 
 Options:
     --yDim INT, -x INT               'x' dimension to use from GMM and feature vectors [default: 0]
     --xDim INT, -y INT               'y' dimension to use from GMM and feature vectors [default: 1]
     --percents FLOAT..., -p FLOAT...  Percentages covered by the regions [default: 90,50]
-    --colorGMM STR, -g STR            Color of the GMM regions boundaries [default: red]
-    --colorFEAT STR, -f STR           Color of the feature population [default: red]
+    --colorGMM1 STR, -g1 STR            Color of the first GMM regions boundaries [default: red]
+    --colorFEAT1 STR, -f1 STR           Color of the first feature population [default: red]
+    --colorGMM2 STR, -g2 STR            Color of the second GMM regions boundaries [default: red]
+    --colorFEAT2 STR, -f2 STR           Color of the second feature population [default: red]
     --limits xyLimits -l xyLimits     xyLimits are the four values xMin,xMax,yMin,yMax [default: auto]
 
     --help, -h                        Shows this message
@@ -169,16 +169,20 @@ Options:
 if __name__ == '__main__':
     args = docopt(USAGE)
 
-    fileGMM = args['<file-gmm>']
-    filesFeat = args['<file-feat>']
+    fileGMM1 = args['<file-gmm1>']
+    fileGMM2 = args['<file-gmm2>']
+    filesFeat1 = args['<file-feat1>']
+    filesFeat2 = args['<file-feat2>']
     xDim = int(args['--xDim'])
     yDim = int(args['--yDim'])
     percents = args['--percents']
     if percents:
         percents = percents.split(',')
         percents = np.array([float(percent) / 100 for percent in percents])
-    colorGmm = args['--colorGMM']
-    colorFeat = args['--colorFEAT']
+    colorGmm1 = args['--colorGMM1']
+    colorFeat1 = args['--colorFEAT1']
+    colorGmm2 = args['--colorGMM2']
+    colorFeat2 = args['--colorFEAT2']
     limits = args['--limits']
     if limits != 'auto':
         limits = [int(limit) for limit in limits.split(',')]
@@ -188,5 +192,9 @@ if __name__ == '__main__':
     else:
         limits = None
 
-    plotGMM(fileGMM, xDim, yDim, percents, colorGmm, filesFeat, colorFeat, limits, 111)
+plotGMM(fileGMM1, xDim, yDim, percents, colorGmm1, filesFeat1, colorFeat1, limits, 221)
+plotGMM(fileGMM1, xDim, yDim, percents, colorGmm1, filesFeat2, colorFeat2, limits, 222)
+plotGMM(fileGMM2, xDim, yDim, percents, colorGmm2, filesFeat1, colorFeat1, limits, 223)
+plotGMM(fileGMM2, xDim, yDim, percents, colorGmm2, filesFeat2, colorFeat2, limits, 224)
 
+plt.show()
