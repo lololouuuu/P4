@@ -30,7 +30,7 @@ int classify(const vector<GMM> &vgmm, const fmatrix &dat, float &maxlprob) {
   for(int k = 0; k<vgmm.size(); ++k){
     lprob = vgmm[k].logprob(dat);
     if(lprob>=maxlprob){
-      lprob = maxlprob;
+      maxlprob = lprob;
       maxind = k;
     } 
   } 

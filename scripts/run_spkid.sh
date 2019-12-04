@@ -13,7 +13,7 @@
 # - name_exp: name of the experiment
 # - db:       directory of the speecon database 
 lists=/Users/Almendra/Documents/UPC/3B/PAV/P4/lists
-w=work
+w=/Users/Almendra/Documents/UPC/3B/PAV/P4/work
 name_exp=one
 db=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/speecon
 
@@ -103,9 +103,9 @@ compute_mfcc() {
 
 
 #  Set the name of the feature (not needed for feature extraction itself)
-if [[ ! -v FEAT && $# > 0 && "$(type -t compute_$1)" = function ]]; then
+if [[ ! -n "$FEAT" && $# > 0 && "$(type -t compute_$1)" = function ]]; then
 	FEAT=$1
-elif [[ ! -v FEAT ]]; then
+elif [[ ! -n "$FEAT" ]]; then
 	echo "Variable FEAT not set. Please rerun with FEAT set to the desired feature."
 	echo
 	echo "For instance:"
@@ -130,7 +130,7 @@ for cmd in $*; do
        for dir in $db/BLOCK*/SES* ; do
            name=${dir/*\/}
            echo $name ----
-           gmm_train  -v 1 -T 0.001 -N5 -m 1 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
+           gmm_train  -v 1 -T 0.001 -N 20 -m 5 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
            echo
        done
    elif [[ $cmd == test ]]; then
@@ -155,6 +155,12 @@ for cmd in $*; do
 	   #
 	   # - The name of the world model will be used by gmm_verify in the 'verify' command below.
        echo "Implement the trainworld option ..."
+        for dir in $db/BLOCK*/SES* ; do
+           name=${dir/*\/}
+           echo $name ----
+           gmm_train  -v 1 -T 0.001 -N 20 -m 5 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
+           echo
+       done
    elif [[ $cmd == verify ]]; then
        ## @file
 	   # \TODO 
@@ -166,6 +172,9 @@ for cmd in $*; do
 	   #   * <code> gmm_verify ... | tee $w/verif_${FEAT}_${name_exp}.log </code>
        echo "Implement the verify option ..."
 
+       #gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w world $w/lists/gmm.list $list/verif/all.test  $list/all.test.candidates > $w/spk_verify.log || exit 1
+       gmm_verify -d $w/$FEAT -e mcp -D $w/gmm/mcp -E gmm -w all $w/lists/gmm.list $list/verif/all.test  $w/lists_verif/all.test.candidates > $w/verif_${FEAT}_${name_exp}.log. || exit 1
+ 
    elif [[ $cmd == verif_err ]]; then
        if [[ ! -s $w/verif_${FEAT}_${name_exp}.log ]] ; then
           echo "ERROR: $w/verif_${FEAT}_${name_exp}.log not created"
