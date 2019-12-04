@@ -133,7 +133,7 @@ for cmd in $*; do
            echo
        done
    elif [[ $cmd == test ]]; then
-       find $w/gmm/$FEAT -name '*.gmm' -printf '%P\n' | perl -pe 's/.gmm$//' | sort  > $lists/gmm.list
+       find $w/gmm/$FEAT -name '*.gmm' -print | sed -e "s-$w/gmm/$FEAT/--" -e 's/.gmm$//' | sort  > $lists/gmm.list
        (gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/class/all.test | tee $w/class_${FEAT}_${name_exp}.log) || exit 1
 
    elif [[ $cmd == classerr ]]; then
