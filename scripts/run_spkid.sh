@@ -155,12 +155,9 @@ for cmd in $*; do
 	   #
 	   # - The name of the world model will be used by gmm_verify in the 'verify' command below.
        echo "Implement the trainworld option ..."
-        for dir in $db/BLOCK*/SES* ; do
-           name=${dir/*\/}
-           echo $name ----
-           gmm_train  -v 1 -T 0.001 -N 20 -m 5 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
-           echo
-       done
+        
+       gmm_train  -v 1 -T 0.001 -N 20 -m 5 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
+       
    elif [[ $cmd == verify ]]; then
        ## @file
 	   # \TODO 
@@ -172,8 +169,7 @@ for cmd in $*; do
 	   #   * <code> gmm_verify ... | tee $w/verif_${FEAT}_${name_exp}.log </code>
        echo "Implement the verify option ..."
 
-       #gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w world $w/lists/gmm.list $list/verif/all.test  $list/all.test.candidates > $w/spk_verify.log || exit 1
-       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w all $w/gmm/all.list $list/verif/all.test  $lists/verif/all.test.candidates > $w/spk_verify.log || exit 1
+       gmm_verify -d $w/gmm/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w all $lists/gmm.list $lists/verif/all.test  $lists/verif/all.test.candidates > $w/spk_verify.log || exit 1
  
    elif [[ $cmd == verif_err ]]; then
        if [[ ! -s $w/verif_${FEAT}_${name_exp}.log ]] ; then

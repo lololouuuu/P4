@@ -26,8 +26,13 @@ float verify(const GMM &gmm_candidate, const fmatrix &dat) {
 
   /// \TODO
   /// Implement verification score based on gmm of the candidate.
+  //  Dada la gmm de un candidato hemos de encontrar una score usando unos datos
+  // Averiguar donde se usa esta función ----> EN el main de abajo (linea 133)
+  // Que datos se estan usando --------> Datos que vienen de un directorio inputfile names que sale de linea () 
+  
+  float score; 
+  score = gmm_candidate.logprob(dat);
 
-  float score = 0.0F;
   return score;
 }
 
@@ -37,10 +42,13 @@ float verify(const GMM &gmm_candidate, const GMM & gmm_world, const fmatrix &dat
 
   /// \TODO
   /// Implement verification score based on the gmm of the candidate and the 'world' model.
-  float score = 0.0F;
-  lprobcand = 0.0F;
-  lprobbackground = 0.0F;
+  // Primera versión
+  
+  float score;
+  lprobcand = gmm_candidate.logprob(dat);
+  lprobbackground = gmm_world.logprob(dat);
 
+  score = lprobcand/lprobbackground; 
 
   return score;
 
