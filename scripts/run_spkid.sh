@@ -16,6 +16,7 @@ lists=lists
 w=work
 name_exp=one
 db=spk_ima/speecon
+p=/Users/pauri/PAV/P4/scripts
 
 # ------------------------
 # Usage
@@ -165,16 +166,16 @@ for cmd in $*; do
 	   #   For instance:
 	   #   * <code> gmm_verify ... > $w/verif_${FEAT}_${name_exp}.log </code>
 	   #   * <code> gmm_verify ... | tee $w/verif_${FEAT}_${name_exp}.log </code>
-     gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w all $lists/gmm.list $lists/verif/all.test  $lists/verif/all.test.candidates > $w/spk_verify.log || exit 1
+     gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w all $lists/gmm.list $lists/verif/all.test  $lists/verif/all.test.candidates > $w/verif_${FEAT}_${name_exp}.log || exit 1
 
    elif [[ $cmd == verif_err ]]; then
-       if [[ ! -s $w/class_${FEAT}_${name_exp}.log ]] ; then
+       if [[ ! -s $w/verif_${FEAT}_${name_exp}.log ]] ; then
           echo "ERROR: $w/class_${FEAT}_${name_exp}.log not created"
           exit 1
        fi
        # You can pass the threshold to spk_verif_score.pl or it computes the
        # best one for these particular results.
-       spk_verif_score $w/class_${FEAT}_${name_exp}.log | tee $w/class_${FEAT}_${name_exp}.res
+       $p/spk_verif_score.pl $w/verif_${FEAT}_${name_exp}.log | tee $w/verif_${FEAT}_${name_exp}.res
 
    elif [[ $cmd == finalclass ]]; then
        ## @file
