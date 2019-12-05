@@ -26,7 +26,7 @@ float verify(const GMM &gmm_candidate, const fmatrix &dat) {
 
   /// \HECHO
   /// Implement verification score based on gmm of the candidate.
-  return (float)gmm_candidate.logprob(dat);
+  return gmm_candidate.logprob(dat);
 }
 
 
@@ -36,9 +36,9 @@ float verify(const GMM &gmm_candidate, const GMM & gmm_world, const fmatrix &dat
   /// \HECHO
   /// Implement verification score based on the gmm of the candidate and the 'world' model.
   lprobcand = gmm_candidate.logprob(dat);
-  lprobbackground = gmm_world.lprob(dat);
+  lprobbackground = gmm_world.logprob(dat);
 
-  return (float)lprobcand/lprobbackground;
+  return lprobcand-lprobbackground;
 
 }
 

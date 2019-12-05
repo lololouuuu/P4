@@ -39,7 +39,7 @@ else
 fi
 
 # Main command for feature extration
-sox $inputfile -t raw - | $X2X +sf| $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 | $MFCC -l 200 -m $mfcc_order -s 8 -w 1 > $base.mfcc
+sox $inputfile -t raw - | $X2X +sf| $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 | $MFCC -l 200 -m $mfcc_order -n 25 > $base.mfcc
 
 # Our array files need a header with the number of cols and rows:
 ncol=$((mfcc_order+1)) # mfcc p =>  (gain a1 a2 ... ap)
