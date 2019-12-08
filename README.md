@@ -88,6 +88,8 @@ sox $inputfile -t raw - | $X2X +sf | $FRAME -l 400 -p 80 | $WINDOW -l 400 -L 400
   
 - Inserte una gráfica que permita comparar los modelos y poblaciones de dos locutores distintos. Comente el
   resultado obtenido y discuta si el modelado mediante GMM permite diferenciar las señales de uno y otro.
+ <img src="img/compareLP.png" width="640" align="center">
+ <img src="img/compareLPC.png" width="640" align="center">
  <img src="img/compareGMM.png" width="640" align="center">
  
 ### Reconocimiento del locutor.
