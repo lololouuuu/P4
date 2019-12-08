@@ -37,8 +37,19 @@ sox $inputfile -t raw - | $X2X +sf | $FRAME -l 400 -p 80 | $WINDOW -l 400 -L 400
 
 - Escriba el *pipeline* principal usado para calcular los coeficientes cepstrales en escala Mel (MFCC), en
   su fichero <code>scripts/wav2mfcc.sh</code>:
+  
+  
 
 - Indique qué parámetros considera adecuados para el cálculo de los coeficientes LPCC y MFCC.
+
+  Para el cálculo de estos coeficientes los mejores parámetros son:
+  - Núm. de coeficientes para LP = 8
+
+  - Núm. de coeficientes para LPCC = 12
+
+  - Núm. de coeficientes para MFCC = 16
+
+  - Núm. de filtros para MFCC = 25
 
 - Inserte una imagen mostrando la dependencia entre los coeficientes 2 y 3 de las tres parametrizaciones
   para una señal de prueba.
@@ -63,6 +74,15 @@ sox $inputfile -t raw - | $X2X +sf | $FRAME -l 400 -p 80 | $WINDOW -l 400 -L 400
 - Inserte una gráfica que muestre la función de densidad de probabilidad modelada por el GMM de un locutor
   para sus dos primeros coeficientes de MFCC.
   
+  *Coeficientes LP de dos locutores*
+  <img src="img/1_lp.png" width="640" align="center">
+  <img src="img/2_lp.png" width="640" align="center">
+  
+  *Coeficientes LPC de dos locutores*
+  <img src="img/1_lpcc.png" width="640" align="center">
+  <img src="img/2_lpcc.png" width="640" align="center">
+  
+  *Coeficientes MFCC de dos locutores*
   <img src="img/1_mfcc.png" width="640" align="center">
   <img src="img/2_mfcc.png" width="640" align="center">
   
