@@ -23,7 +23,7 @@ lpc_order=$1
 inputfile=$2
 outputfile=$3
 
-UBUNTU_SPTK=1
+UBUNTU_SPTK=0
 if [[ $UBUNTU_SPTK == 1 ]]; then
    # In case you install SPTK using debian package (apt-get)
    X2X="sptk x2x"
@@ -39,7 +39,7 @@ else
 fi
 
 # Main command for feature extration
-sox $inputfile -t raw - | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
+sox $inputfile -t raw -  dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
 	$LPC -l 200 -m $lpc_order > $base.lp
 
 # Our array files need a header with the number of cols and rows:

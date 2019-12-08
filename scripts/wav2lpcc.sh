@@ -41,7 +41,6 @@ else
 fi
 
 # Main command for feature extration
-
 sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
 	$LPC -l 200 | $LPC2C -M $lpcc_order > $base.lpcc
 
