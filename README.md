@@ -2,7 +2,7 @@ PAV - P4: reconocimiento y verificación del locutor
 ===================================================
 Práctica realizada por: Víctor Emilio y Pau Rodríguez
 
-**RESULTADOS OBTENIDOS (Base de Datos de Entrenamiento) **
+**RESULTADOS OBTENIDOS (Base de Datos de Entrenamiento)**
 
 * LP (Train: N = 40, m = 15; Trainworld: N = 20, m = 30)  
 
