@@ -132,7 +132,7 @@ for cmd in $*; do
        ## @file
 	   # \TODO
 	   # Select (or change) good parameters for gmm_train
-       for dir in  $db/BLOCK*/SES* ; do
+       for dir in $db/BLOCK*/SES* ; do
            name=${dir/*\/}
            echo $name ----
            if [[ $FEAT == lpcc ]]; then
@@ -227,16 +227,7 @@ for cmd in $*; do
         (gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/class/all.test | tee $w/class_${FEAT}_${name_exp}.log) || exit 1 
 
        ######## Classerr #########################################################################################         
-       if [[ ! -s $w/class_${FEAT}_${name_exp}.log ]] ; then
-          echo "ERROR: $w/class_${FEAT}_${name_exp}.log not created"
-          exit 1
-       fi
-       # Count errors
-       perl -ne 'BEGIN {$ok=0; $err=0}
-                 next unless /^.*SA(...).*SES(...).*$/;
-                 if ($1 == $2) {$ok++}
-                 else {$err++}
-                 END {printf "nerr=%d\tntot=%d\terror_rate=%.2f%%\n", ($err, $ok+$err, 100*$err/($ok+$err))}' $w/class_${FEAT}_${name_exp}.log | tee -a $w/class_${FEAT}_${name_exp}.log 
+       
        ######## Trainworld #########################################################################################         
       echo "Implement the trainworld option ..."
         
