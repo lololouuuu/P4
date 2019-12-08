@@ -192,9 +192,9 @@ if __name__ == '__main__':
     else:
         limits = None
 
-plotGMM(fileGMM1, xDim, yDim, percents, colorGmm1, filesFeat1, colorFeat1, limits, 221)
-plotGMM(fileGMM1, xDim, yDim, percents, colorGmm1, filesFeat2, colorFeat2, limits, 222)
-plotGMM(fileGMM2, xDim, yDim, percents, colorGmm2, filesFeat1, colorFeat1, limits, 223)
-plotGMM(fileGMM2, xDim, yDim, percents, colorGmm2, filesFeat2, colorFeat2, limits, 224)
+plotGMM(fileGMM1, xDim, yDim, percents, 'red', filesFeat1, colorFeat1, limits, 221)
+plotGMM(fileGMM1, xDim, yDim, percents, 'red', filesFeat2, colorFeat2, limits, 222)
+plotGMM(fileGMM2, xDim, yDim, percents, 'blue', filesFeat1, colorFeat1, limits, 223)
+plotGMM(fileGMM2, xDim, yDim, percents, 'blue', filesFeat2, colorFeat2, limits, 224)
 
 plt.show()
