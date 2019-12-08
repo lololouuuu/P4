@@ -12,10 +12,13 @@
 # - w:        a working directory for temporary files
 # - name_exp: name of the experiment
 # - db:       directory of the speecon database 
-lists=lists
-w=work
+lists=/Users/Almendra/Documents/UPC/3B/PAV/P4/lists
+w=/Users/Almendra/Documents/UPC/3B/PAV/P4/work
 name_exp=one
-db=spk_db/speecon
+db=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/speecon
+
+p=/Users/Almendra/Documents/UPC/3B/PAV/P4/scripts
+
 
 # ------------------------
 # Usage
@@ -85,11 +88,27 @@ compute_lp() {
     done
 }
 
+compute_lpcc() {
+    for filename in $(cat $lists/class/all.train $lists/class/all.test); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2lpcc 12 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
+compute_mfcc() {
+    for filename in $(cat $lists/class/all.train $lists/class/all.test); do
+        mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
+        EXEC="wav2mfcc 13 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        echo $EXEC && $EXEC || exit 1
+    done
+}
+
 
 #  Set the name of the feature (not needed for feature extraction itself)
-if [[ ! -v FEAT && $# > 0 && "$(type -t compute_$1)" = function ]]; then
+if [[ ! -n "$FEAT" && $# > 0 && "$(type -t compute_$1)" = function ]]; then
 	FEAT=$1
-elif [[ ! -v FEAT ]]; then
+elif [[ ! -n "$FEAT" ]]; then
 	echo "Variable FEAT not set. Please rerun with FEAT set to the desired feature."
 	echo
 	echo "For instance:"
@@ -114,12 +133,12 @@ for cmd in $*; do
        for dir in $db/BLOCK*/SES* ; do
            name=${dir/*\/}
            echo $name ----
-           gmm_train  -v 1 -T 0.001 -N5 -m 1 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
+           gmm_train -i 1 -v 1 -T 0.001 -N 100 -m 15 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
            echo
        done
    elif [[ $cmd == test ]]; then
-       find $w/gmm/$FEAT -name '*.gmm' -printf '%P\n' | perl -pe 's/.gmm$//' | sort  > $lists/gmm.list
-       (gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/class/all.test | tee $w/class_${FEAT}_${name_exp}.log) || exit 1
+    find $w/gmm/$FEAT -name '*.gmm' -print | sed -e "s-$w/gmm/$FEAT/--" -e 's/.gmm$//' | sort  > $lists/gmm.list
+    (gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/class/all.test | tee $w/class_${FEAT}_${name_exp}.log) || exit 1
 
    elif [[ $cmd == classerr ]]; then
        if [[ ! -s $w/class_${FEAT}_${name_exp}.log ]] ; then
@@ -128,7 +147,7 @@ for cmd in $*; do
        fi
        # Count errors
        perl -ne 'BEGIN {$ok=0; $err=0}
-                 next unless /^.*SA(...).*SES(...).*$/; 
+                 next unless /^.*SA(...).*SES(...).*$/;
                  if ($1 == $2) {$ok++}
                  else {$err++}
                  END {printf "nerr=%d\tntot=%d\terror_rate=%.2f%%\n", ($err, $ok+$err, 100*$err/($ok+$err))}' $w/class_${FEAT}_${name_exp}.log | tee -a $w/class_${FEAT}_${name_exp}.log
@@ -139,6 +158,9 @@ for cmd in $*; do
 	   #
 	   # - The name of the world model will be used by gmm_verify in the 'verify' command below.
        echo "Implement the trainworld option ..."
+        
+       gmm_train -i 1 -v 1 -T 0.001 -N 100 -m 15 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
+       
    elif [[ $cmd == verify ]]; then
        ## @file
 	   # \TODO 
@@ -150,6 +172,8 @@ for cmd in $*; do
 	   #   * <code> gmm_verify ... | tee $w/verif_${FEAT}_${name_exp}.log </code>
        echo "Implement the verify option ..."
 
+       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w all $lists/gmm.list $lists/verif/all.test  $lists/verif/all.test.candidates > $w/verif_${FEAT}_${name_exp}.log || exit 1
+
    elif [[ $cmd == verif_err ]]; then
        if [[ ! -s $w/verif_${FEAT}_${name_exp}.log ]] ; then
           echo "ERROR: $w/verif_${FEAT}_${name_exp}.log not created"
@@ -157,7 +181,7 @@ for cmd in $*; do
        fi
        # You can pass the threshold to spk_verif_score.pl or it computes the
        # best one for these particular results.
-       spk_verif_score.pl $w/verif_${FEAT}_${name_exp}.log | tee $w/verif_${FEAT}_${name_exp}.res
+       $p/spk_verif_score.pl $w/verif_${FEAT}_${name_exp}.log | tee $w/verif_${FEAT}_${name_exp}.res
 
    elif [[ $cmd == finalclass ]]; then
        ## @file
