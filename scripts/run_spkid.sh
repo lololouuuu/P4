@@ -206,7 +206,7 @@ for cmd in $*; do
 	   # The list of users is the same as for the classification task. The list of files to be
 	   # recognized is lists/final/class.test
        echo "To be implemented ..."
-
+    '
        ######## Train  #########################################################################################         
        for dir in $verif/c* ; do
            name=${dir/*\/}
@@ -261,7 +261,7 @@ for cmd in $*; do
        # You can pass the threshold to spk_verif_score.pl or it computes the
        # best one for these particular results.
        $p/spk_verif_score.pl $w/verif_${FEAT}_${name_exp}.log | tee $w/verif_${FEAT}_${name_exp}.res
-
+   '
    elif [[ $cmd == finalverif ]]; then
        ## @file
 	   # \TODO
