@@ -38,9 +38,9 @@ sub read_data {
 
 	if (3 > (($filename, $spkid, $score) = split)) {
 	    print STDERR "Format error in line $_\n";
-	    exit 1;	
+	    exit 1;
 	}
-	
+
 	$user = "";
 	if ($filename !~ /.*SA(...)/) {
 	    print STDERR "Format error in fname ($filename), line $_\n";
@@ -52,12 +52,12 @@ sub read_data {
 	    exit 1;
 	}
 	$spkid = $1;
-	
+
 	$min_score = $score if $min_score > $score;
 	$max_score = $score if $max_score < $score;
-	
+
 	push @users, $score if ($spkid eq $user);
-	push @impostors, $score if ($spkid ne $user);	
+	push @impostors, $score if ($spkid ne $user);
     }
 }
 
@@ -101,12 +101,12 @@ if ($threshold == -1e30) {
 	    $min_cost = $cost;
 	    $threshold = $thr;
 	}
-	print "THR\t$thr\t$cost\t$p_miss($n_miss)\t$p_falseAlarm($n_falseAlarm)\n" 	
+	print "THR\t$thr\t$cost\t$p_miss($n_miss)\t$p_falseAlarm($n_falseAlarm)\n"
 	    if $show_threshold_search;
 
     }
     print "\n\n" if $show_threshold_search;
-} 
+}
 
 $n_falseAlarm = count_gt($threshold, @impostors);
 $n_miss = $n_users -count_gt($threshold, @users);
@@ -121,7 +121,7 @@ print "THR: $threshold\n";
 print "Missed:     $n_miss/$n_users=", sprintf("%.4f\n",$p_miss);
 print "FalseAlarm: $n_falseAlarm/$n_impostors=", sprintf("%.4f\n", $p_falseAlarm);
 print "----------------------------------------------\n";
-print "==> CostDetection: ", sprintf("%.1f\n", 100*$cost); 
+print "==> CostDetection: ", sprintf("%.1f\n", 100*$cost);
 print "==============================================\n";
 
 exit 0;
