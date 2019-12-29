@@ -18,7 +18,7 @@ name_exp=one
 db=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/speecon
 
 #Añadidas
-verif=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/sr_test
+db1=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/sr_test
 p=/Users/Almendra/Documents/UPC/3B/PAV/P4/scripts
 
 
@@ -93,7 +93,7 @@ compute_lp() {
 compute_lpcc() {
     for filename in $(cat $lists/class/all.train $lists/class/all.test); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2lpcc 12 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        EXEC="wav2lpcc 20 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
     done
 }
@@ -101,7 +101,7 @@ compute_lpcc() {
 compute_mfcc() {
     for filename in $(cat $lists/class/all.train $lists/class/all.test); do
         mkdir -p `dirname $w/$FEAT/$filename.$FEAT`
-        EXEC="wav2mfcc 13 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
+        EXEC="wav2mfcc 15 $db/$filename.wav $w/$FEAT/$filename.$FEAT"
         echo $EXEC && $EXEC || exit 1
     done
 }
@@ -136,13 +136,13 @@ for cmd in $*; do
            name=${dir/*\/}
            echo $name ----
            if [[ $FEAT == lpcc ]]; then
-            gmm_train -i 1 -v 1 -T 0.001 -N 40 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
+            gmm_train -i 1 -v 1 -T 0.001 -N 1000000000 -m 50 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
            echo
            elif [[ $FEAT == lp ]]; then
-            gmm_train -i 1 -v 1 -T 0.001 -N 40 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
+            gmm_train -i 1 -v 1 -T 0.001 -N 1000000000 -m 40 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
             echo
            elif [[ $FEAT == mfcc ]]; then
-            gmm_train -i 1 -v 1 -T 0.001 -N 50 -m 15 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
+            gmm_train -i 1 -v 1 -T 0.001 -N 1000000000 -m 50 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/class/$name.train || exit 1
             echo
            fi
        done
@@ -170,11 +170,11 @@ for cmd in $*; do
        echo "Implement the trainworld option ..."
         
        if [[ $FEAT == lpcc ]]; then
-       gmm_train -i 1 -v 1 -T 0.001 -N 20 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
+       gmm_train -i 1 -v 1 -T 0.001 -N 1000000000 -m 50 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
        elif [[ $FEAT == lp ]]; then
-       gmm_train -i 1 -v 1 -T 0.001 -N 20 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
+       gmm_train -i 1 -v 1 -T 0.001 -N 1000000000 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
        elif [[ $FEAT == mfcc ]]; then
-       gmm_train -i 1 -v 1 -T 0.001 -N 50 -m 15 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
+       gmm_train -i 1 -v 1 -T 0.001 -N 1000000000 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
        fi       
 
    elif [[ $cmd == verify ]]; then
@@ -205,54 +205,34 @@ for cmd in $*; do
 	   # Perform the final test on the speaker classification of the files in spk_ima/sr_test/spk_cls.
 	   # The list of users is the same as for the classification task. The list of files to be
 	   # recognized is lists/final/class.test
-       echo "To be implemented ..."
-    '
-       ######## Train  #########################################################################################         
-       for dir in $verif/c* ; do
-           name=${dir/*\/}
-           echo $name ----
-           if [[ $FEAT == lpcc ]]; then
-            gmm_train -i 1 -v 1 -T 0.001 -N 40 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/final/$name.train || exit 1
-           echo
-           elif [[ $FEAT == lp ]]; then
-            gmm_train -i 1 -v 1 -T 0.001 -N 40 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/final/$name.train || exit 1
-            echo
-           elif [[ $FEAT == mfcc ]]; then
-            gmm_train -i 1 -v 1 -T 0.001 -N 50 -m 15 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/$name.gmm $lists/final/$name.train || exit 1
-            echo
-           fi
-       done 
-       ######## Test #########################################################################################         
-       find $w/gmm/$FEAT -name '*.gmm' -print | sed -e "s-$w/gmm/$FEAT/--" -e 's/.gmm$//' | sort  > $lists/gmm.list
-        (gmm_classify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/class/all.test | tee $w/class_${FEAT}_${name_exp}.log) || exit 1 
+       echo "To be implemented ..."    
 
-       ######## Classerr #########################################################################################         
-       
-       ######## Trainworld #########################################################################################         
-      echo "Implement the trainworld option ..."
-        
-       if [[ $FEAT == lpcc ]]; then
-       gmm_train -i 1 -v 1 -T 0.001 -N 20 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
-       elif [[ $FEAT == lp ]]; then
-       gmm_train -i 1 -v 1 -T 0.001 -N 20 -m 30 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
-       elif [[ $FEAT == mfcc ]]; then
-       gmm_train -i 1 -v 1 -T 0.001 -N 50 -m 15 -d $w/$FEAT -e $FEAT -g $w/gmm/$FEAT/all.gmm $lists/class/all.train || exit 1
-       fi 
+    for filename in $(cat $lists/final/class.test); do
+        mkdir -p `dirname $w/$FEAT/FINAL/$filename.$FEAT`
+        if [[ $FEAT == lpcc ]]; then
+            EXEC="wav2lpcc 20 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        elif [[ $FEAT == lp ]]; then
+            EXEC="wav2lp 8 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        elif [[ $FEAT == mfcc ]]; then
+            EXEC="wav2mfcc 15 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        fi
+    done
 
-       ######## Verify #########################################################################################         
-       
-       gmm_verify -d $w/$FEAT -e $FEAT -D $w/gmm/$FEAT -E gmm -w all $lists/gmm.list $lists/verif/all.test  $lists/verif/all.test.candidates > $w/verif_${FEAT}_${name_exp}.log || exit 1
+    find $w/gmm/$FEAT -name '*.gmm' -print | sed -e "s-$w/gmm/$FEAT/--" -e 's/.gmm$//' | sort  > $lists/gmm.list
+    (gmm_classify -d $w/$FEAT/FINAL -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/final/class.test | tee $w/class_test.log) || exit 1
+
+
+    # Count errors
+     perl -ne 'BEGIN {$ok=0; $err=0}
+ 		next unless /^.*SA(...).*SES(...).*$/;
+                 if ($1 == $2) {$ok++}
+                 else {$err++}
+                 END {printf "nerr=%d\tntot=%d\terror_rate=%.2f%%\n", ($err, $ok+$err, 100*$err/($ok+$err))}' $w/class_test.log | tee -a $w/class_test.log
+      
    
-       ####### Verif_err #########################################################################################         
-
-       if [[ ! -s $w/verif_${FEAT}_${name_exp}.log ]] ; then
-          echo "ERROR: $w/verif_${FEAT}_${name_exp}.log not created"
-          exit 1
-       fi
-       # You can pass the threshold to spk_verif_score.pl or it computes the
-       # best one for these particular results.
-       $p/spk_verif_score.pl $w/verif_${FEAT}_${name_exp}.log | tee $w/verif_${FEAT}_${name_exp}.res
-   '
    elif [[ $cmd == finalverif ]]; then
        ## @file
 	   # \TODO
@@ -261,7 +241,32 @@ for cmd in $*; do
 	   # is lists/final/verif.test, and the list of users claimed by the test files is
 	   # lists/final/verif.test.candidates
        echo "To be implemented ..."
-   
+
+    for filename in $(cat $lists/final/verif.test); do
+        mkdir -p `dirname $w/$FEAT/FINAL/$filename.$FEAT`
+        if [[ $FEAT == lpcc ]]; then
+            EXEC="wav2lpcc 20 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        elif [[ $FEAT == lp ]]; then
+            EXEC="wav2lp 8 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        elif [[ $FEAT == mfcc ]]; then
+            EXEC="wav2mfcc 15 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        fi
+    done
+
+
+    gmm_verify -d $w/$FEAT/final -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/verif.test $lists/final/verif.test.candidates | tee $w/verif_test.log
+    
+
+    if [[ ! -s $w/verif_test.log ]] ; then
+          echo "ERROR: $w/verif_test.log not created"
+          exit 1
+    fi
+       # You can pass the threshold to spk_verif_score.pl or it computes the
+       # best one for these particular results.
+    
    # If the command is not recognize, check if it is the name
    # of a feature and a compute_$FEAT function exists.
    elif [[ "$(type -t compute_$cmd)" = function ]]; then

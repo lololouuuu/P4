@@ -19,7 +19,7 @@ if [[ $# != 3 ]]; then
    exit 1
 fi
 
-lpcc_order=$1
+lpc_order=$1
 inputfile=$2
 outputfile=$3
 
@@ -42,7 +42,8 @@ fi
 
 # Main command for feature extration
 sox $inputfile -t raw - dither -p 12 | $X2X +sf | $FRAME -l 200 -p 40 | $WINDOW -l 200 -L 200 |
-	$LPC -l 200 | $LPC2C -M $lpcc_order > $base.lpcc
+	$LPC -l 200 -m $lpc_order | $LPC2C -m $lpc_order -M 25  > $base.lpcc
+   #Fijamos el número de cesptrums (solo variamos el orden lpc)
 
 # Our array files need a header with the number of cols and rows:
 ncol=$((lpcc_order+1)) # lpc p =>  (gain a1 a2 ... ap)
