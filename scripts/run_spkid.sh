@@ -213,10 +213,10 @@ for cmd in $*; do
             EXEC="wav2lpcc 20 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
             echo $EXEC && $EXEC || exit 1
         elif [[ $FEAT == lp ]]; then
-            EXEC="wav2lp 8 $db/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            EXEC="wav2lp 8 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
             echo $EXEC && $EXEC || exit 1
         elif [[ $FEAT == mfcc ]]; then
-            XEC="wav2mfcc 15 $db/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            EXEC="wav2mfcc 15 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
             echo $EXEC && $EXEC || exit 1
         fi
     done
@@ -224,7 +224,7 @@ for cmd in $*; do
     find $w/gmm/$FEAT -name '*.gmm' -print | sed -e "s-$w/gmm/$FEAT/--" -e 's/.gmm$//' | sort  > $lists/gmm.list
     (gmm_classify -d $w/$FEAT/FINAL -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list  $lists/final/class.test | tee $w/class_test.log) || exit 1
 
-	 
+
     # Count errors
      perl -ne 'BEGIN {$ok=0; $err=0}
  		next unless /^.*SA(...).*SES(...).*$/;
@@ -242,24 +242,31 @@ for cmd in $*; do
 	   # lists/final/verif.test.candidates
        echo "To be implemented ..."
 
-    gmm_verify -d $w/$FEAT/final -e $FEAT -D $w/gmm/$FEAT -E gmm -w $world lists/gmm.list lists/final/verif.test lists/final/verif.test.candidates | tee $w/final/verif_test.log
-       
+    for filename in $(cat $lists/final/verif.test); do
+        mkdir -p `dirname $w/$FEAT/FINAL/$filename.$FEAT`
+        if [[ $FEAT == lpcc ]]; then
+            EXEC="wav2lpcc 20 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        elif [[ $FEAT == lp ]]; then
+            EXEC="wav2lp 8 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        elif [[ $FEAT == mfcc ]]; then
+            EXEC="wav2mfcc 15 $db1/$filename.wav $w/$FEAT/FINAL/$filename.$FEAT"
+            echo $EXEC && $EXEC || exit 1
+        fi
+    done
+
+
+    gmm_verify -d $w/$FEAT/final -e $FEAT -D $w/gmm/$FEAT -E gmm $lists/gmm.list $lists/final/verif.test $lists/final/verif.test.candidates | tee $w/verif_test.log
+    
+
     if [[ ! -s $w/verif_test.log ]] ; then
           echo "ERROR: $w/verif_test.log not created"
           exit 1
     fi
        # You can pass the threshold to spk_verif_score.pl or it computes the
        # best one for these particular results.
-       $p/spk_verif_score.pl $w/verif_test.log | tee $w/verif_test.res
-
-       if [[ ! -s $w/final/verif_test.log ]] ; then
-          echo "ERROR: $w/final/verif_test.log not created"
-          exit 1
-       fi
-       
-       spk_verif_score $w/final/verif_test.log | tee $w/final/verif_test.res
-
-   
+    
    # If the command is not recognize, check if it is the name
    # of a feature and a compute_$FEAT function exists.
    elif [[ "$(type -t compute_$cmd)" = function ]]; then
