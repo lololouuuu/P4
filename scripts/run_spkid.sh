@@ -15,12 +15,14 @@
 lists=/Users/Almendra/Documents/UPC/3B/PAV/P4/lists
 w=/Users/Almendra/Documents/UPC/3B/PAV/P4/work
 name_exp=one
+ Rodriguez_Hernandez
 db=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/speecon
 
 #Añadidas
 db1=/Users/Almendra/Documents/UPC/3B/PAV/P4/spk_ima/sr_test
 p=/Users/Almendra/Documents/UPC/3B/PAV/P4/scripts
-
+=======
+db=spk_ima/speecon
 
 # ------------------------
 # Usage
