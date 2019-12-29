@@ -84,12 +84,44 @@ Para los coeficiente MFCC tenemos en cuenta:
   de verificación de SPEECON. La tabla debe incluir el umbral óptimo, el número de falsas alarmas y de
   pérdidas, y el score obtenido usando la parametrización que mejor resultado le hubiera dado en la tarea
   de reconocimiento.
+
+LP (Train: N = 40, m = 15; Trainworld: N = 20, m = 30)
+Núm. de coeficientes: 8
+
+Error rate: 3,69%
+
+Cost detection: 76,2
+
+LPCC (Train: N = 40, m = 15; Trainworld: N = 20, m = 30)
+Núm. de coeficientes: 12
+
+Error rate: 1,27 %
+
+Cost detection: 23,6
+
+MFCC (Train: N = 50, m = 15; Trainworld: N = 50, m = 15)
+Núm. de coeficientes: 16
+
+Núm. de filtros: 25
+
+Error rate: 63,97%
+
+Cost detection: 86
  
 ### Test final y trabajo de ampliación.
 
-- Recuerde adjuntar los ficheros `class_test.log` y `verif_test.log` correspondientes a la evaluación
-  *ciega* final.
+En Cuanto a la ampliación de optimizar los costes del sistema, nos centramos en mejorar el sistema basado en MFCC pues consideramos que era el más desafiante.
+Modificamos el script wav2mfcc especificando el número de filtros (40) y utilizamos las indicaciones del profesor (numero de gaussianas, iteraciones, num de coeficientes)
+A pesar de mejorar considerablemente el sistema MFCC no fuimos capaces de mejorar los costes obtenidos con lpcc:
 
-- Recuerde, también, enviar a Atenea un fichero en formato zip o tgz con la memoria con el trabajo
-  realizado como ampliación, así como los ficheros `class_ampl.log` y/o `verif_ampl.log`, obtenidos como
-  resultado del mismo.
+MFCC (Train: N = 10000000, m = 50; Trainworld: N = 10000000, m = 30)
+Núm. de coeficientes: 15
+
+Núm. de filtros: 40
+
+Error rate: 5.54%
+
+Cost detection: 25.6
+
+Los ficheros .log de ampliación se han hecho con esta configuración.
+
